@@ -1,19 +1,15 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "Node20"  // or whatever NodeJS tool name you configured
-    }
-
     environment {
-        EC2_HOST = "ubuntu@54.255.244.33"
+        EC2_HOST = "ubuntu@13.229.206.184"
         SSH_KEY = "ec2-ssh-key"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'master', url: 'https://github.com/deerajnshetty/nginx-react.git'
+                git branch: 'main', url: 'https://github.com/yourusername/your-react-repo.git'
             }
         }
 
@@ -31,7 +27,7 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshbuildagent([env.SSH_KEY]) {
+                sshagent([env.SSH_KEY]) {
                     sh """
                     scp -o StrictHostKeyChecking=no -r build/* ${EC2_HOST}:/var/www/react-app/
                     ssh -o StrictHostKeyChecking=no ${EC2_HOST} 'sudo systemctl reload nginx'
