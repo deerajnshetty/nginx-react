@@ -4,6 +4,10 @@ pipeline {
     tools {
         nodejs 'nodejs'  // same name as configured in Jenkins
     }
+    environment {
+        EC2_HOST = "ubuntu@52.77.229.122"
+        SSH_KEY = "ec2-ssh-key"
+    }
 
     stages {
         stage('Clone Repo') {
@@ -26,7 +30,8 @@ pipeline {
 
         stage('Serve App') {
           steps {
-                sh 'npm start'
+            sshagent([env.SSH_KEY])
+              sh 'npm start'
             }
         }
     }
