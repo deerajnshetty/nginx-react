@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+       nodejs "Nodejs"
+  }
     environment {
         EC2_HOST = "ubuntu@13.229.206.184"
         SSH_KEY = "ec2-ssh-key"
