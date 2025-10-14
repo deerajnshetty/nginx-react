@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "Node20"  // or whatever NodeJS tool name you configured
+    }
+
     environment {
         EC2_HOST = "ubuntu@54.255.244.33"
         SSH_KEY = "ec2-ssh-key"
