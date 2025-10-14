@@ -28,10 +28,14 @@ pipeline {
             }
         }
 
-        stage('Serve App') {
-          steps {
-            sshagent([env.SSH_KEY])
-              sh 'npm start'
+             stage('Deploy to EC2') {
+            steps {
+                sshagent([env.SSH_KEY]) {
+                    sh """
+                    scp -o StrictHostKeyChecking=no -r build/* ${EC2_HOST}:/var/www/react-app/
+                    ssh -o StrictHostKeyChecking=no ${EC2_HOST} 'sudo systemctl reload nginx'
+                    """
+                }
             }
         }
     }
