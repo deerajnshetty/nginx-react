@@ -31,10 +31,11 @@ pipeline {
              stage('Deploy to EC2') {
             steps {
                 sshagent([env.SSH_KEY]) {
-                    sh """
-                    scp -o StrictHostKeyChecking=no -r build/* ${EC2_HOST}:/var/www/react-app/
-                    ssh -o StrictHostKeyChecking=no ${EC2_HOST} 'sudo systemctl reload nginx'
-                    """
+                  sh '''
+                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo mkdir -p /var/www/react-app && sudo chown -R ubuntu:ubuntu /var/www/react-app"
+                       scp -o StrictHostKeyChecking=no -r build/* ubuntu@52.77.229.122:/var/www/react-app/
+                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo systemctl restart nginx"
+                 '''
                 }
             }
         }
