@@ -36,6 +36,7 @@ pipeline {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} 'sudo chown -R ubuntu:ubuntu /var/www/html'
                         ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} 'sudo rm -rf ${DEPLOY_PATH}/*'
                         scp -r -o StrictHostKeyChecking=no build/* ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
                         ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} 'sudo systemctl reload nginx'
