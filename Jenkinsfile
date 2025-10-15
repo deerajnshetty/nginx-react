@@ -34,7 +34,7 @@ pipeline {
                   sh '''
                        ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo mkdir -p /var/www/react-app && sudo chown -R ubuntu:ubuntu /var/www/react-app"
                        scp -o StrictHostKeyChecking=no -r build/* ubuntu@52.77.229.122:/var/www/react-app/
-                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo systemctl restart nginx"
+                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo systemctl reload nginx"
                  '''
                 }
             }
