@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    
+    tools {
+        nodejs 'nodejs'  // same name as configured in Jenkins
+    }
 
     environment {
         DEPLOY_USER = 'ubuntu'
