@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     credentialsId: 'github-cred', // Replace with your Jenkins GitHub credential ID
                     url: 'https://github.com/deerajnshetty/nginx-react.git'
             }
