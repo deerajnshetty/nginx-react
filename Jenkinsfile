@@ -1,18 +1,18 @@
 pipeline {
     agent any
-    
-    tools {
-        nodejs 'nodejs'  // same name as configured in Jenkins
-    }
+
     environment {
-        EC2_HOST = "ubuntu@52.77.229.122"
-        SSH_KEY = "ec2-ssh-key"
+        DEPLOY_USER = 'ubuntu'
+        DEPLOY_HOST = '<NGINX-EC2-PUBLIC-IP>'
+        DEPLOY_PATH = '/var/www/html'
     }
 
     stages {
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git credentialsId: 'github-cred', url: 'https://github.com/deerajnshetty/nginx-react.git', branch: 'master'
+                git branch: 'main',
+                    credentialsId: 'github-cred', // Replace with your Jenkins GitHub credential ID
+                    url: 'https://github.com/your-username/your-react-repo.git'
             }
         }
 
@@ -22,22 +22,31 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build React App') {
             steps {
                 sh 'npm run build'
             }
         }
 
-             stage('Deploy to EC2') {
+        stage('Deploy to Remote NGINX Server') {
             steps {
-                sshagent([env.SSH_KEY]) {
-                  sh '''
-                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo mkdir -p /var/www/react-app && sudo chown -R ubuntu:ubuntu /var/www/react-app"
-                       scp -o StrictHostKeyChecking=no -r build/* ubuntu@52.77.229.122:/var/www/react-app/
-                       ssh -o StrictHostKeyChecking=no ubuntu@52.77.229.122 "sudo systemctl reload nginx"
-                 '''
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} 'sudo rm -rf ${DEPLOY_PATH}/*'
+                        scp -r -o StrictHostKeyChecking=no build/* ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} 'sudo systemctl reload nginx'
+                    """
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment successful! React app is live on NGINX server.'
+        }
+        failure {
+            echo '❌ Deployment failed. Check logs for details.'
         }
     }
 }
