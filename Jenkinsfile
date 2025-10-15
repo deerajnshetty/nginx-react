@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DEPLOY_USER = 'ubuntu'
-        DEPLOY_HOST = '<NGINX-EC2-PUBLIC-IP>'
+        DEPLOY_HOST = '18.141.9.218'
         DEPLOY_PATH = '/var/www/html'
     }
 
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     credentialsId: 'github-cred', // Replace with your Jenkins GitHub credential ID
-                    url: 'https://github.com/your-username/your-react-repo.git'
+                    url: 'https://github.com/deerajnshetty/nginx-react.git'
             }
         }
 
